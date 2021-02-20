@@ -39,7 +39,9 @@
                     </div>
                 </div>
             </b-tab-item>
-            <b-tab-item label="GitHub" icon="github"></b-tab-item>
+            <b-tab-item label="GitHub" icon="github">
+              <b-button class="is-dark" icon-left="github" @click="redirect_github()">Open GitHub repository</b-button>
+            </b-tab-item>
         </b-tabs>
     </section>
 </template>
@@ -85,6 +87,9 @@ export default {
       } catch (error) {
         alert(error)
       }
+    },
+    redirect_github () {
+      window.open('https://github.com/fabiom91/covid_vaccine_numbers')
     }
   }
 }
