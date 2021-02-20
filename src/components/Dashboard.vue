@@ -15,17 +15,17 @@
             <b-tab-item label="Data" icon="chart-arc">
                 <div class="columns">
                     <div class="column field">Population</div>
-                    <div class="column value">{{ (country_data) ? country_data[0].population : '' }}</div>
+                    <div class="column value">{{ population }}</div>
                 </div>
                 <div class="columns">
                     <div class="column field">Vaccinated</div>
                     <div class="column value">
-                        <p>{{ (allNumbers.length > 0)? allNumbers.sort((a,b)=>a.date-b.date).reverse()[0].vaccinated : '' }}</p>
-                        <p><b>{{ (formattedData.length > 0) ? formattedData.sort((a,b)=>a.x-b.x).reverse()[0].y : '' }}%</b> of total population</p>
+                        <p>{{ vaccinated }}</p>
+                        <p><b>{{ percentage_vaccinated }}%</b> of total population</p>
                     </div>
                 </div>
                 <line-chart :percentage="formattedData"/>
-                <h2>Last Update: {{ (formattedData.length > 0) ? formattedData.sort((a,b)=>a.x-b.x).reverse()[0].x : '' }}</h2>
+                <h2>Last Update: {{ last_update }}</h2>
             </b-tab-item>
             <b-tab-item label="Sources" icon="database">
                 <div class="columns">
@@ -61,7 +61,11 @@ export default {
       subtitle: 'An unofficial monitoring app',
       country_data: null,
       allNumbers: [],
-      formattedData: []
+      formattedData: [],
+      population: null,
+      last_update: null,
+      vaccinated: null,
+      percentage_vaccinated: null
     }
   },
   mounted () {
@@ -83,6 +87,10 @@ export default {
             y: percentage
           }
           this.formattedData.push(formatted)
+          this.population = this.country_data[0].population
+          this.last_update = this.formattedData.sort((a, b) => a.x - b.x).reverse()[0].x
+          this.vaccinated = this.allNumbers.sort((a, b) => a.date - b.date).reverse()[0].vaccinated
+          this.percentage_vaccinated = this.formattedData.sort((a, b) => a.x - b.x).reverse()[0].y
         }
       } catch (error) {
         alert(error)
