@@ -97,9 +97,11 @@ export default {
           this.formattedData.push(formatted)
         }
         this.population = this.country_data[0].population
-        this.last_update = this.formattedData.sort((a, b) => a.x - b.x).reverse()[0].x
-        this.vaccinated = this.allNumbers.sort((a, b) => a.date - b.date).reverse()[0].vaccinated
-        this.percentage_vaccinated = this.formattedData.sort((a, b) => a.x - b.x).reverse()[0].y
+        this.allNumbers = this.allNumbers.sort((a, b) => a.date - b.date)
+        this.formattedData = this.formattedData.sort((a, b) => a.x - b.x)
+        this.last_update = this.formattedData[this.formattedData.length - 1].x
+        this.vaccinated = this.allNumbers[this.allNumbers.length - 1].vaccinated
+        this.percentage_vaccinated = this.formattedData[this.formattedData.length - 1].y
       } catch (error) {
         alert(error)
       }
