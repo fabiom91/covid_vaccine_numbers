@@ -24,7 +24,7 @@
                         <p><b>{{ percentage_vaccinated }}%</b> of total population</p>
                     </div>
                 </div>
-                <line-chart :percentage="formattedData"/>
+                <line-chart :percentage="formattedData" :forseen="forseen"/>
                 <h2>Last Update: {{ last_update }}</h2>
             </b-tab-item>
             <b-tab-item label="Sources" icon="database">
@@ -68,6 +68,14 @@ export default {
       percentage_vaccinated: null
     }
   },
+  computed: {
+    forseen () {
+      return [{
+        x: new Date(1632960000000).toLocaleDateString(),
+        y: 100
+      }]
+    }
+  },
   mounted () {
     this.get_data()
   },
@@ -87,11 +95,11 @@ export default {
             y: percentage
           }
           this.formattedData.push(formatted)
-          this.population = this.country_data[0].population
-          this.last_update = this.formattedData.sort((a, b) => a.x - b.x).reverse()[0].x
-          this.vaccinated = this.allNumbers.sort((a, b) => a.date - b.date).reverse()[0].vaccinated
-          this.percentage_vaccinated = this.formattedData.sort((a, b) => a.x - b.x).reverse()[0].y
         }
+        this.population = this.country_data[0].population
+        this.last_update = this.formattedData.sort((a, b) => a.x - b.x).reverse()[0].x
+        this.vaccinated = this.allNumbers.sort((a, b) => a.date - b.date).reverse()[0].vaccinated
+        this.percentage_vaccinated = this.formattedData.sort((a, b) => a.x - b.x).reverse()[0].y
       } catch (error) {
         alert(error)
       }

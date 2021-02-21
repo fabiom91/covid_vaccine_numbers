@@ -1,12 +1,16 @@
 <template>
     <div>
-        <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
+        <apexchart type="line" :options="chartOptions" :series="series"></apexchart>
     </div>
 </template>
 <script>
 export default {
   props: {
     percentage: {
+      type: Array,
+      default: () => []
+    },
+    forseen: {
       type: Array,
       default: () => []
     }
@@ -16,10 +20,17 @@ export default {
       series: [{
         name: 'percentage_vaccinated',
         data: this.percentage
-      }],
-      chartOptions: {
+      }, {
+        name: 'Forseen Vaccinated',
+        data: this.forseen
+      }]
+    }
+  },
+  computed: {
+    chartOptions () {
+      return {
         chart: {
-          height: 350,
+          height: 600,
           type: 'line',
           id: 'areachart-2'
         },
@@ -40,7 +51,7 @@ export default {
             }
           }],
           points: [{
-            x: new Date('30 Sep 2021').getTime(),
+            x: this.forseen[0].x,
             y: 100,
             marker: {
               size: 8,
@@ -73,18 +84,10 @@ export default {
             left: 20
           }
         },
-        labels: this.percentage.map(obj => obj.date),
+        labels: this.percentage.map(obj => obj.x),
         xaxis: {
-          categories: this.percentage.map(obj => obj.date)
+          categories: this.percentage.map(obj => obj.x)
         }
-      }
-    }
-  },
-  methods: {
-    forseen () {
-      return {
-        x: new Date('30 Sep 2021').getTime(),
-        y: 100
       }
     }
   }
