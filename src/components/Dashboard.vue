@@ -37,8 +37,13 @@
                 <hr />
                 <div class="columns">
                   <div class="column">
-                    <p :style="'color: '+avgGap.color">AVG. daily gap between Actual and Expected number of people vaccinated: <b>{{avgGap.gapStr}}</b></p>
-                    <p v-if="avgGap.color == 'red'"> We would need to vaccinate approximately: {{Math.round(Math.abs(avgGap.gap * (avgIncrease * population))/ 1000)}}K more people each day to be able to reach Herd Immunity (60% of population) by {{ forseenHerdImmunityDate }} and Total Immunisation (100% of population) by: 30/09/2021</p>
+                    <div v-if="avgIncrease - avgIncreaseExp < 0">
+                      <p style="color: red">AVG. daily gap between Actual and Expected number of people vaccinated: <b>{{Math.round((avgIncrease - avgIncreaseExp)*100)/100}}</b></p>
+                      <p> We would need to vaccinate approximately: {{Math.round(Math.abs(avgIncrease - avgIncreaseExp) * avgIncreaseNumber / 1000)}}K more people each day to be able to reach Herd Immunity (60% of population) by {{ forseenHerdImmunityDate }} and Total Immunisation (100% of population) by: 30/09/2021</p>
+                    </div>
+                    <div v-else>
+                      <p style="color: green">AVG. daily gap between Actual and Expected number of people vaccinated: <b>{{avgIncrease - avgIncreaseExp}}</b></p>
+                    </div>
                   </div>
                 </div>
                 <line-chart :percentage="formattedData" :forseen="forseen"/>
@@ -87,8 +92,9 @@ export default {
       forseenHerdImmunityDate: null,
       predictedEndDate: null,
       predictedHerdImmunityDate: null,
-      avgGap: {},
-      avgIncrease: null
+      avgIncrease: null,
+      avgIncreaseExp: null,
+      avgIncreaseNumber: null
     }
   },
   mounted () {
@@ -103,7 +109,9 @@ export default {
         snapshot.forEach(doc => {
           this.allNumbers.push(doc.data())
         })
+        let sumVaccinated = 0
         for (const obj of this.allNumbers) {
+          sumVaccinated = sumVaccinated + obj.vaccinated
           const percentage = Math.round((obj.vaccinated * 10000) / this.country_data[0].population) / 100
           const formatted = {
             x: new Date(obj.date.seconds * 1000).toLocaleDateString(),
@@ -118,6 +126,7 @@ export default {
           }
           this.forseen.push(formattedForseen)
         }
+        this.avgIncreaseNumber = Math.round(sumVaccinated / this.allNumbers.length)
         this.population = this.country_data[0].population
         this.allNumbers = this.allNumbers.sort((a, b) => a.date - b.date)
         this.formattedData = this.formattedData.sort((a, b) => a.x - b.x)
@@ -140,22 +149,7 @@ export default {
           expectedIncreaseArray.push(increase)
         }
         const sumExp = expectedIncreaseArray.reduce((previous, current) => current + previous, 0)
-        const avgIncreaseExp = sumExp / expectedIncreaseArray.length
-
-        const gap = Math.round((this.avgIncrease - avgIncreaseExp) * 100) / 100
-        if (gap >= 0) {
-          this.avgGap = {
-            gap: gap,
-            gapStr: '+' + gap + '%',
-            color: 'green'
-          }
-        } else {
-          this.avgGap = {
-            gap: gap,
-            gapStr: '' + gap + '%',
-            color: 'red'
-          }
-        }
+        this.avgIncreaseExp = sumExp / expectedIncreaseArray.length
 
         let nOfDaysHerd = 0
         let getHerd = true
