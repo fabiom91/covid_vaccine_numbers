@@ -34,6 +34,13 @@
                         <p> <i>Expected <b>Herd Immunity</b> (60%) reach by: </i><b>{{ forseenHerdImmunityDate }}</b></p>
                     </div>
                 </div>
+                <hr />
+                <div class="columns">
+                  <div class="column">
+                    <p :style="'color: '+avgGap.color">AVG. daily gap between Actual and Expected number of people vaccinated: <b>{{avgGap.gapStr}}</b></p>
+                    <p v-if="avgGap.color == 'red'"> We would need to vaccinate approximately: {{Math.round(Math.abs(avgGap.gap * (avgIncrease * population))/ 1000)}}K more people each day to be able to reach Herd Immunity (60% of population) by {{ forseenHerdImmunityDate }} and Total Immunisation (100% of population) by: 30/09/2021</p>
+                  </div>
+                </div>
                 <line-chart :percentage="formattedData" :forseen="forseen"/>
                 <h2>Last Update: {{ last_update }}</h2>
             </b-tab-item>
@@ -79,7 +86,9 @@ export default {
       forseen: [],
       forseenHerdImmunityDate: null,
       predictedEndDate: null,
-      predictedHerdImmunityDate: null
+      predictedHerdImmunityDate: null,
+      avgGap: {},
+      avgIncrease: null
     }
   },
   mounted () {
@@ -123,13 +132,35 @@ export default {
           increaseArray.push(increase)
         }
         const sum = increaseArray.reduce((previous, current) => current + previous, 0)
-        const avgIncrease = sum / increaseArray.length
-        console.log(sum)
-        console.log(avgIncrease)
+        this.avgIncrease = sum / increaseArray.length
+
+        let expectedIncreaseArray = []
+        for (let i = 2; i < this.forseen.length; i++) {
+          const increase = this.forseen[i].y - this.forseen[i - 1].y
+          expectedIncreaseArray.push(increase)
+        }
+        const sumExp = expectedIncreaseArray.reduce((previous, current) => current + previous, 0)
+        const avgIncreaseExp = sumExp / expectedIncreaseArray.length
+
+        const gap = Math.round((this.avgIncrease - avgIncreaseExp) * 100) / 100
+        if (gap >= 0) {
+          this.avgGap = {
+            gap: gap,
+            gapStr: '+' + gap + '%',
+            color: 'green'
+          }
+        } else {
+          this.avgGap = {
+            gap: gap,
+            gapStr: '' + gap + '%',
+            color: 'red'
+          }
+        }
+
         let nOfDaysHerd = 0
         let getHerd = true
         let days = 0
-        for (let count = this.formattedData[this.formattedData.length - 1].y; count <= 100; count = count + avgIncrease) {
+        for (let count = this.formattedData[this.formattedData.length - 1].y; count <= 100; count = count + this.avgIncrease) {
           days++
           if (count >= 60 && getHerd === true) {
             nOfDaysHerd = days
