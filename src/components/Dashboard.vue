@@ -101,7 +101,7 @@ export default {
             y: percentage
           }
           this.formattedData.push(formatted)
-          const daysFrom20Feb = (obj.date.seconds - 1613779200) / (3600 * 24)
+          const daysFrom20Feb = (obj.date.seconds - 1611705600) / (3600 * 24)
           const forseenPercentage = Math.round((daysFrom20Feb * 10000) / 223) / 100
           const formattedForseen = {
             x: new Date(obj.date.seconds * 1000).toLocaleDateString(),
@@ -116,9 +116,9 @@ export default {
         this.vaccinated = this.allNumbers[this.allNumbers.length - 1].vaccinated
         this.percentage_vaccinated = this.formattedData[this.formattedData.length - 1].y
 
-        this.forseenHerdImmunityDate = new Date(((60 * 223) / 100) * 86400000 + 1613779200000).toLocaleDateString()
+        this.forseenHerdImmunityDate = new Date(((60 * 223) / 100) * 86400000 + 1611705600000).toLocaleDateString()
         let increaseArray = []
-        for (let i = 1; i < this.formattedData.length; i++) {
+        for (let i = 2; i < this.formattedData.length; i++) {
           const increase = this.formattedData[i].y - this.formattedData[i - 1].y
           increaseArray.push(increase)
         }
@@ -136,8 +136,8 @@ export default {
             getHerd = false
           }
         }
-        this.predictedEndDate = new Date(1613779200000 + (86400000 * days)).toLocaleDateString()
-        this.predictedHerdImmunityDate = new Date(1613779200000 + (86400000 * nOfDaysHerd)).toLocaleDateString()
+        this.predictedEndDate = new Date(1611705600000 + (86400000 * days)).toLocaleDateString()
+        this.predictedHerdImmunityDate = new Date(1611705600000 + (86400000 * nOfDaysHerd)).toLocaleDateString()
       } catch (error) {
         alert(error)
       }

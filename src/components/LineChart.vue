@@ -21,7 +21,7 @@ export default {
         name: 'Actual Vaccinated',
         data: this.percentage
       }, {
-        name: 'Forseen Vaccinated',
+        name: 'Expected Vaccinated',
         data: this.forseen
       }]
     }
