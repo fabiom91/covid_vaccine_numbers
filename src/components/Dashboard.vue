@@ -18,10 +18,20 @@
                     <div class="column value">{{ population }}</div>
                 </div>
                 <div class="columns">
-                    <div class="column field">Vaccinated</div>
+                    <div class="column field">Actual Vaccinated</div>
                     <div class="column value">
                         <p>{{ vaccinated }}</p>
                         <p><b>{{ percentage_vaccinated }}%</b> of total population</p>
+                        <p> <i>Expected <b>Herd Immunity</b> (60%) reach by: </i><b>{{ predictedHerdImmunityDate }}</b></p>
+                        <p> <i>Expected <b>100% Immunity</b> reach by: </i><b>{{ predictedEndDate }}</b></p>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column field"><p>Expected Vaccinated </p><p style="font-size: small"> <i>(To reach 100% vaccinated by 30th September 2021)</i></p></div>
+                    <div class="column value">
+                        <p>{{ Math.round((population * forseen[forseen.length - 1].y) / 100) }}</p>
+                        <p><b>{{ forseen[forseen.length - 1].y }}%</b> of total population</p>
+                        <p> <i>Expected <b>Herd Immunity</b> (60%) reach by: </i><b>{{ forseenHerdImmunityDate }}</b></p>
                     </div>
                 </div>
                 <line-chart :percentage="formattedData" :forseen="forseen"/>
@@ -65,15 +75,11 @@ export default {
       population: null,
       last_update: null,
       vaccinated: null,
-      percentage_vaccinated: null
-    }
-  },
-  computed: {
-    forseen () {
-      return [{
-        x: new Date(1632960000000).toLocaleDateString(),
-        y: 100
-      }]
+      percentage_vaccinated: null,
+      forseen: [],
+      forseenHerdImmunityDate: null,
+      predictedEndDate: null,
+      predictedHerdImmunityDate: null
     }
   },
   mounted () {
@@ -95,6 +101,13 @@ export default {
             y: percentage
           }
           this.formattedData.push(formatted)
+          const daysFrom20Feb = (obj.date.seconds - 1613779200) / (3600 * 24)
+          const forseenPercentage = Math.round((daysFrom20Feb * 10000) / 223) / 100
+          const formattedForseen = {
+            x: new Date(obj.date.seconds * 1000).toLocaleDateString(),
+            y: forseenPercentage
+          }
+          this.forseen.push(formattedForseen)
         }
         this.population = this.country_data[0].population
         this.allNumbers = this.allNumbers.sort((a, b) => a.date - b.date)
@@ -102,6 +115,29 @@ export default {
         this.last_update = this.formattedData[this.formattedData.length - 1].x
         this.vaccinated = this.allNumbers[this.allNumbers.length - 1].vaccinated
         this.percentage_vaccinated = this.formattedData[this.formattedData.length - 1].y
+
+        this.forseenHerdImmunityDate = new Date(((60 * 223) / 100) * 86400000 + 1613779200000).toLocaleDateString()
+        let increaseArray = []
+        for (let i = 1; i < this.formattedData.length; i++) {
+          const increase = this.formattedData[i].y - this.formattedData[i - 1].y
+          increaseArray.push(increase)
+        }
+        const sum = increaseArray.reduce((previous, current) => current + previous, 0)
+        const avgIncrease = sum / increaseArray.length
+        console.log(sum)
+        console.log(avgIncrease)
+        let nOfDaysHerd = 0
+        let getHerd = true
+        let days = 0
+        for (let count = this.formattedData[this.formattedData.length - 1].y; count <= 100; count = count + avgIncrease) {
+          days++
+          if (count >= 60 && getHerd === true) {
+            nOfDaysHerd = days
+            getHerd = false
+          }
+        }
+        this.predictedEndDate = new Date(1613779200000 + (86400000 * days)).toLocaleDateString()
+        this.predictedHerdImmunityDate = new Date(1613779200000 + (86400000 * nOfDaysHerd)).toLocaleDateString()
       } catch (error) {
         alert(error)
       }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <apexchart type="line" :options="chartOptions" :series="series"></apexchart>
+        <apexchart type="line" height="350px" :options="chartOptions" :series="series"></apexchart>
     </div>
 </template>
 <script>
@@ -18,7 +18,7 @@ export default {
   data () {
     return {
       series: [{
-        name: 'percentage_vaccinated',
+        name: 'Actual Vaccinated',
         data: this.percentage
       }, {
         name: 'Forseen Vaccinated',
@@ -49,28 +49,28 @@ export default {
               },
               text: 'Herd Immunity'
             }
-          }],
-          points: [{
-            x: this.forseen[0].x,
-            y: 100,
-            marker: {
-              size: 8,
-              fillColor: '#fff',
-              strokeColor: 'red',
-              radius: 2,
-              cssClass: 'apexcharts-custom-class'
-            },
-            label: {
-              borderColor: '#FF4560',
-              offsetY: 0,
-              style: {
-                color: '#fff',
-                background: '#FF4560'
-              },
-
-              text: 'All Vaccinated'
-            }
           }]
+          // points: [{
+          //   x: '30/09/2021',
+          //   y: 100,
+          //   marker: {
+          //     size: 8,
+          //     fillColor: '#fff',
+          //     strokeColor: 'red',
+          //     radius: 2,
+          //     cssClass: 'apexcharts-custom-class'
+          //   },
+          //   label: {
+          //     borderColor: '#FF4560',
+          //     offsetY: 0,
+          //     style: {
+          //       color: '#fff',
+          //       background: '#FF4560'
+          //     },
+
+          //     text: 'All Vaccinated'
+          //   }
+          // }]
         },
         dataLabels: {
           enabled: true
