@@ -52,17 +52,27 @@
             <b-tab-item label="Sources" icon="database">
                 <div class="columns">
                     <div class="column">
-                        <h4>Total Population Data</h4>
+                        <b>Total Population Data</b>
                         <p>The population number displayed in the "Data" page, comes from https://restcountries.eu/ API: https://restcountries.eu/rest/v2/name/ireland</p>
                     </div>
                     <div class="column">
-                        <h4>Number of people vaccinated</h4>
-                        <p> This data comes from the HSE covid tracker app: https://covidtracker.gov.ie/ and is manually updated daily. </p>
+                        <b>Number of people vaccinated</b>
+                        <p> This data comes from the HSE covid tracker app: https://covidtracker.gov.ie/ and is manually updated daily. The number of vaccinated people refers to those
+                          who have complete the full vaccination cycle which for some vaccines translate to having received 2 doses.
+                        </p>
                     </div>
                 </div>
             </b-tab-item>
             <b-tab-item label="GitHub" icon="github">
-              <b-button class="is-dark" icon-left="github" @click="redirect_github()">Open GitHub repository</b-button>
+              <div class="columns">
+                <div class="column">
+                  <b-button class="is-dark mb-5" icon-left="github" @click="redirect_github()">Open GitHub repository</b-button>
+                  <p><i>This is a completely open-source project that welcomes all kind of developers to fork it on GitHub, play with it, fix bugs and make adjustments at pleasure.
+                    However, being also completely free and not monetized in any way, don't expect to find an API to access the data pulled from my database. Instead, you'll
+                    find a copy of the entire database below for you to copy and use it as you like:</i></p>
+                  <b-message class="mt-5">{{allNumbers}}</b-message>
+                </div>
+              </div>
             </b-tab-item>
         </b-tabs>
     </section>
